@@ -6,7 +6,7 @@ from PIL import Image
 from sklearn.metrics import classification_report
 
 # Import additional allowed libraries below
-pca=None
+
 class MNISTPreprocessor:
     def __init__(self, data_dir, config = None):
         """
@@ -91,19 +91,7 @@ class MNISTPreprocessor:
             y.append(label)
         X = np.array(X)
         y = np.array(y)
-        print("shape", X.shape)
         return X, y
-
-    def make_fake_image(self, true, preds):
-        p = 4
-        l = []
-        for i in range(len(true)):
-            if (p == 0):
-                break
-            elif (true[i] != preds[i]):
-                l.append(self.image_paths[i])
-
-        print(l)
 
 
 def filter_dataset(X, y, entry_number_digit):
@@ -119,19 +107,7 @@ def filter_dataset(X, y, entry_number_digit):
     relevant_pos = np.where(condition)[0]
     X = X[relevant_pos]
     y = y[relevant_pos]
-    # print(relevant_pos)
-    # self.image_paths = np.array(self.image_paths)
-    # self.image_paths=self.image_paths[relevant_pos]
-    from sklearn.decomposition import PCA
-    global pca
-    if (pca == None):
-        pca = PCA(n_components=50)
-        X = pca.fit_transform(X)
-    else:
-        X = pca.transform(X)
     return X, y
-
-
 
 
 def convert_labels_to_svm_labels(arr, svm_pos_label = 0):
@@ -150,20 +126,5 @@ def val_score(preds, true):
         preds.shape == true.shape
     ), "Shape Mismatch. Assigning 0 score"
 
-    report = classification_report(true, preds, output_dict=True, zero_division=0)
+    report = classification_report(true, preds, output_dict=True)
     return report["macro avg"]['f1-score']
-
-from sklearn.metrics import accuracy_score
-
-def val_accuracy(preds: np.ndarray, true: np.ndarray) -> float:
-    if preds.shape != true.shape:
-        print("Shape Mismatch. Assigning 0 accuracy.")
-        return 0.0
-
-    return accuracy_score(true, preds)
-
-
-
-
-
-
